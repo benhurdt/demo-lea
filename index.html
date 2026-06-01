@@ -231,15 +231,42 @@ body{font-family:'Inter',sans-serif;color:var(--text);font-size:14px}
 </head>
 <body>
 
-<!-- TELA DE CONFIGURAÇÃO (oculta na demo pública) -->
-<div class="config-screen" id="config-screen" style="display:none">
+<!-- TELA DE CONFIGURAÇÃO -->
+<div class="config-screen" id="config-screen">
   <div class="config-card">
     <div class="config-logo">⚖️</div>
-    <div class="config-titulo">Léa — Demo</div>
-    <input id="cfg-key" type="hidden" value="">
-    <input id="cfg-adv" type="hidden" value="Dr. Carlos Mendes">
-    <input id="cfg-esp" type="hidden" value="Advocacia Civil e Trabalhista">
-    <input id="cfg-cidade" type="hidden" value="Osório RS">
+    <div class="config-titulo">Léa — Secretária Virtual</div>
+    <div class="config-sub">
+      Configure sua chave Groq para ativar a IA.<br>
+      A chave fica salva só no seu navegador.
+    </div>
+    <div class="config-field">
+      <label>Chave Groq API</label>
+      <input id="cfg-key" type="password"
+        placeholder="gsk_xxxxxxxxxxxxxxxxxxxx"
+        onkeydown="if(event.key==='Enter')salvarConfig()">
+    </div>
+    <div class="config-field">
+      <label>Nome do advogado</label>
+      <input id="cfg-adv" type="text"
+        placeholder="Ex: Dr. Carlos Mendes" value="Dr. Carlos Mendes">
+    </div>
+    <div class="config-field">
+      <label>Especialidade</label>
+      <input id="cfg-esp" type="text"
+        placeholder="Ex: Advocacia Civil e Trabalhista"
+        value="Advocacia Civil e Trabalhista">
+    </div>
+    <div class="config-field">
+      <label>Cidade</label>
+      <input id="cfg-cidade" type="text"
+        placeholder="Ex: Osório RS" value="Osório RS">
+    </div>
+    <button class="btn-config" onclick="salvarConfig()">✓ Entrar na Demo</button>
+    <div class="config-link">
+      Não tem chave? Obtenha grátis em
+      <a href="https://console.groq.com" target="_blank">console.groq.com</a>
+    </div>
   </div>
 </div>
 
@@ -266,7 +293,7 @@ body{font-family:'Inter',sans-serif;color:var(--text);font-size:14px}
       <div class="hdr-status">online agora</div>
       <div class="hdr-sub" id="hdr-sub">Secretária virtual · Advocacia</div>
     </div>
-    <button class="hdr-cfg" onclick="resetarDemo()" title="Reiniciar demo">↺</button>
+    <button class="hdr-cfg" onclick="abrirConfig()" title="Configurações">⚙️</button>
   </div>
 
   <div class="chat-body" id="chat-body">
@@ -648,18 +675,22 @@ function toast(msg,dur=2400){
   setTimeout(()=>el.classList.remove('show'),dur);
 }
 
-// ── INIT — DEMO PÚBLICA (chave embutida) ─────────────────────
-CFG = {
-  key: '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',
-  advogado: 'Dr. Carlos Mendes',
-  especialidade: 'Advocacia Civil e Trabalhista',
-  cidade: 'Osório RS',
-};
-document.getElementById('hdr-nome').textContent = 'Léa · '+CFG.advogado;
-document.getElementById('hdr-sub').textContent  = 'Secretária virtual · '+CFG.especialidade;
-document.getElementById('config-screen').style.display='none';
-document.getElementById('app').style.display='flex';
-iniciarDemo();
+// ── INIT ──────────────────────────────────────────────────────
+const cfgSalva = localStorage.getItem('lea_v2_cfg');
+if(cfgSalva){
+  try{
+    CFG = JSON.parse(cfgSalva);
+    document.getElementById('cfg-key').value    = CFG.key;
+    document.getElementById('cfg-adv').value    = CFG.advogado;
+    document.getElementById('cfg-esp').value    = CFG.especialidade;
+    document.getElementById('cfg-cidade').value = CFG.cidade;
+    document.getElementById('hdr-nome').textContent = 'Léa · '+CFG.advogado;
+    document.getElementById('hdr-sub').textContent  = 'Secretária virtual · '+CFG.especialidade;
+    document.getElementById('config-screen').style.display='none';
+    document.getElementById('app').style.display='flex';
+    iniciarDemo();
+  }catch(e){ localStorage.removeItem('lea_v2_cfg'); }
+}
 </script>
 </body>
 </html>
